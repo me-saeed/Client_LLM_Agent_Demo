@@ -7,15 +7,11 @@ type TicketState = {
   search: string
   isLoading: boolean
   error: string | null
-  isCreateFormOpen: boolean
-  // actions
   loadTickets: () => Promise<void>
   setSearch: (search: string) => void
   setActiveTicket: (ticket: Ticket | null) => void
   createTicket: (payload: Omit<Ticket, 'id' | 'createdAt'>) => Promise<void>
   updateTicketStatus: (id: string, status: Ticket['status']) => void
-  openCreateForm: () => void
-  closeCreateForm: () => void
 }
 
 export const useTicketStore = create<TicketState>((set, get) => ({
@@ -24,7 +20,6 @@ export const useTicketStore = create<TicketState>((set, get) => ({
   search: '',
   isLoading: false,
   error: null,
-  isCreateFormOpen: false,
   loadTickets: async () => {
     set({ isLoading: true, error: null })
     try {
@@ -68,6 +63,4 @@ export const useTicketStore = create<TicketState>((set, get) => ({
       })
     }
   },
-  openCreateForm: () => set({ isCreateFormOpen: true }),
-  closeCreateForm: () => set({ isCreateFormOpen: false }),
 }))

@@ -15,6 +15,7 @@ import TicketColumn from './_modules/ticketColumn'
 import TicketBoardHeader from './_modules/ticketBoardHeader'
 import TicketItem from './_modules/ticketItem'
 import { useTicketStore } from '@/src/store/tickets/useTicketStore'
+import TicketDetailForm from './_modules/ticketDetailForm'
 
 const COLUMN_STATUSES: Ticket['status'][] = ['OPEN', 'IN_PROGRESS', 'RESOLVED']
 
@@ -64,8 +65,7 @@ const getTargetStatus = (
 }
 
 export default function TicketBoard() {
-  const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
-  const { loadTickets, tickets, updateTicketStatus, error } = useTicketStore()
+  const { loadTickets, tickets, updateTicketStatus, error, activeTicket, setActiveTicket } = useTicketStore()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -125,6 +125,7 @@ export default function TicketBoard() {
         {activeTicket ? <TicketItem ticket={activeTicket} isOverlay /> : null}
       </DragOverlay>
       {error ? <div className="text-white text-center text-xs bg-red-500 fixed top-0 left-0 p-1 w-full">{error}</div> : null}
+      <TicketDetailForm open={!!activeTicket} onClose={() => setActiveTicket(null)} ticket={activeTicket} />
     </DndContext>
   )
 }
