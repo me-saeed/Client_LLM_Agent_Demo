@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import clsx from 'clsx'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
@@ -11,11 +11,29 @@ type TicketItemProps = {
   isOverlay?: boolean
 }
 
-const TicketItemContent: React.FC<{ ticket: Ticket }> = ({ ticket }) => {
-  const { setActiveTicket } = useTicketStore();
+const TicketItemContent: React.FC<{ ticket: Ticket; isDragging: boolean }> = ({
+  ticket,
+  isDragging,
+}) => {
+  const { setActiveTicket } = useTicketStore()
+  const wasDraggingRef = useRef(false)
+
+  useEffect(() => {
+    if (isDragging) {
+      wasDraggingRef.current = true
+    }
+  }, [isDragging])
+
+  const handleClick = () => {
+    if (wasDraggingRef.current) {
+      wasDraggingRef.current = false
+      return
+    }
+    setActiveTicket(ticket)
+  }
 
   return (
-    <a onClick={() => setActiveTicket(ticket)}>
+    <a onClick={handleClick}>
       <div
         className={clsx(
           'absolute top-2 right-2 w-fit py-1 px-2 text-xs rounded-full capitalize text-gray-800',
@@ -70,7 +88,7 @@ const TicketItem: React.FC<TicketItemProps> = ({ ticket, isOverlay = false }) =>
         isDragging && !isOverlay && 'opacity-40'
       )}
     >
-      <TicketItemContent ticket={ticket} />
+      <TicketItemContent ticket={ticket} isDragging={isDragging} />
     </div>
   )
 }

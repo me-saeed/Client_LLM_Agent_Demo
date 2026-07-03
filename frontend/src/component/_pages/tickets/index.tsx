@@ -19,39 +19,6 @@ import TicketDetailForm from './_modules/ticketDetailForm'
 
 const COLUMN_STATUSES: Ticket['status'][] = ['OPEN', 'IN_PROGRESS', 'RESOLVED']
 
-const INITIAL_TICKETS: Ticket[] = [
-  {
-    id: '1',
-    title: 'Ticket 1',
-    description: 'Description 1',
-    customerName: 'Customer 1',
-    customerEmail: 'customer1@example.com',
-    status: 'OPEN',
-    priority: 'LOW',
-    createdAt: '2021-01-01',
-  },
-  {
-    id: '2',
-    title: 'Ticket 2',
-    description: 'Description 2',
-    customerName: 'Customer 2',
-    customerEmail: 'customer2@example.com',
-    status: 'IN_PROGRESS',
-    priority: 'MEDIUM',
-    createdAt: '2021-01-02',
-  },
-  {
-    id: '3',
-    title: 'Ticket 3',
-    description: 'Description 3',
-    customerName: 'Customer 3',
-    customerEmail: 'customer3@example.com',
-    status: 'RESOLVED',
-    priority: 'HIGH',
-    createdAt: '2021-01-03',
-  },
-]
-
 const getTargetStatus = (
   overId: UniqueIdentifier,
   tickets: Ticket[]
@@ -65,7 +32,9 @@ const getTargetStatus = (
 }
 
 export default function TicketBoard() {
-  const { loadTickets, tickets, updateTicketStatus, error, activeTicket, setActiveTicket } = useTicketStore()
+  const { loadTickets, tickets, updateTicketStatus, error, activeTicket, setActiveTicket } =
+    useTicketStore()
+  const [draggedTicket, setDraggedTicket] = useState<Ticket | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -75,12 +44,12 @@ export default function TicketBoard() {
 
   const handleDragStart = (event: DragStartEvent) => {
     const ticket = tickets.find((t) => t.id === event.active.id)
-    setActiveTicket(ticket ?? null)
+    setDraggedTicket(ticket ?? null)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    setActiveTicket(null)
+    setDraggedTicket(null)
 
     if (!over) return
 
@@ -122,7 +91,7 @@ export default function TicketBoard() {
         </main>
       </div>
       <DragOverlay>
-        {activeTicket ? <TicketItem ticket={activeTicket} isOverlay /> : null}
+        {draggedTicket ? <TicketItem ticket={draggedTicket} isOverlay /> : null}
       </DragOverlay>
       {error ? <div className="text-white text-center text-xs bg-red-500 fixed top-0 left-0 p-1 w-full">{error}</div> : null}
       <TicketDetailForm open={!!activeTicket} onClose={() => setActiveTicket(null)} ticket={activeTicket} />
