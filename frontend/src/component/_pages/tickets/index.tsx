@@ -19,7 +19,7 @@ const COLUMN_STATUSES: Ticket['status'][] = ['OPEN', 'IN_PROGRESS', 'RESOLVED']
 
 const INITIAL_TICKETS: Ticket[] = [
   {
-    id: 1,
+    id: '1',
     title: 'Ticket 1',
     description: 'Description 1',
     customerName: 'Customer 1',
@@ -29,7 +29,7 @@ const INITIAL_TICKETS: Ticket[] = [
     createdAt: '2021-01-01',
   },
   {
-    id: 2,
+    id: '2',
     title: 'Ticket 2',
     description: 'Description 2',
     customerName: 'Customer 2',
@@ -39,7 +39,7 @@ const INITIAL_TICKETS: Ticket[] = [
     createdAt: '2021-01-02',
   },
   {
-    id: 3,
+    id: '3',
     title: 'Ticket 3',
     description: 'Description 3',
     customerName: 'Customer 3',
