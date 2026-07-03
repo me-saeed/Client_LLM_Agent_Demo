@@ -8,6 +8,7 @@ import TextInput from '@/src/component/_basic/input'
 import Select from '@/src/component/_basic/select'
 import Button from '@/src/component/_basic/button'
 import { createTicketSchema, type CreateTicketFormValues } from './schema'
+import { useTicketStore } from '@/src/store/tickets/useTicketStore'
 
 type CreateTicketFormProps = {
   isOpen: boolean
@@ -36,15 +37,20 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ isOpen, setIsOpen }
       priority: 'MEDIUM',
     },
   })
-
+  const { createTicket } = useTicketStore()
   const onClose = () => {
     reset()
     setIsOpen(false)
   }
 
   const onSubmit = (data: CreateTicketFormValues) => {
-    // TODO: submit to API
-    console.log('Create ticket:', data)
+    createTicket(
+      {
+        status: 'OPEN',
+        ...data,
+      }
+    )
+
     onClose()
   }
 

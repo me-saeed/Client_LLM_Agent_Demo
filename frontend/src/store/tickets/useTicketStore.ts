@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { fetchTickets, updateTicketStatus } from './ticket.api'
+import { createTicket, fetchTickets, updateTicketStatus } from './ticket.api'
 
 type TicketState = {
   tickets: Ticket[]
@@ -12,6 +12,7 @@ type TicketState = {
   loadTickets: () => Promise<void>
   setSearch: (search: string) => void
   setActiveTicket: (ticket: Ticket | null) => void
+  createTicket: (payload: Omit<Ticket, 'id' | 'createdAt'>) => Promise<void>
   updateTicketStatus: (id: string, status: Ticket['status']) => void
   openCreateForm: () => void
   closeCreateForm: () => void
@@ -39,6 +40,19 @@ export const useTicketStore = create<TicketState>((set, get) => ({
   },
   setSearch: (search) => set({ search }),
   setActiveTicket: (ticket) => set({ activeTicket: ticket }),
+  createTicket: async (payload) => {
+    try {
+      const newTicket = await createTicket(payload)
+      set((state) => ({
+        tickets: [...state.tickets, newTicket],
+        error: null,
+      }))
+    } catch (err) {
+      set({
+        error: err instanceof Error ? err.message : 'Unknown error',
+      })
+    }
+  },
   updateTicketStatus: async (id, status) => {
     try {
       set((state) => ({
