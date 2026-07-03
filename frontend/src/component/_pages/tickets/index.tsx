@@ -94,7 +94,7 @@ export default function TicketBoard() {
       <DragOverlay>
         {draggedTicket ? <TicketItem ticket={draggedTicket} isOverlay /> : null}
       </DragOverlay>
-      {!error ? <Banner description={error ?? "dd"} variant="error" /> : null}
+      {error ? <Banner description={error} variant="error" /> : null}
       <TicketDetailForm open={!!activeTicket} onClose={() => setActiveTicket(null)} ticket={activeTicket} />
     </DndContext>
   )
