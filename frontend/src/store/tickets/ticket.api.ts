@@ -1,6 +1,7 @@
 type FetchTicketsParams = {
-  search?: string
+  name_title?: string
   status?: Ticket['status']
+  priority?: Ticket['priority']
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
 }
@@ -8,8 +9,8 @@ type FetchTicketsParams = {
 
 export async function fetchTickets(params: FetchTicketsParams = {}) {
   const query = new URLSearchParams()
-  if (params.search) query.set('search', params.search)
-  if (params.status) query.set('status', params.status)
+  if (params.name_title) query.set('name_title', params.name_title)
+  if (params.priority) query.set('priority', params.priority)
   if (params.sortBy) query.set('sortBy', params.sortBy)
   if (params.sortOrder) query.set('sortOrder', params.sortOrder)
   const res = await fetch(`/api/ticket?${query.toString()}`)

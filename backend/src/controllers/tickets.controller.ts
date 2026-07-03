@@ -1,10 +1,3 @@
-/**
- * Tickets controller.
- *
- * Handles HTTP request/response logic for ticket CRUD operations.
- * Business data is read from and written to MongoDB via the Ticket model.
- * Create and update actions also emit real-time Socket.IO events.
- */
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { QueryFilter, SortOrder } from 'mongoose';
@@ -18,27 +11,22 @@ interface GetTicketsQuery {
   priority?: string;
 }
 
-/**
- * Builds a MongoDB filter from validated query params.
- * Exact match for `status` and `priority`.
- */
 const buildTicketFilter = (query: GetTicketsQuery): QueryFilter<TicketDocument> => {
   const filter: QueryFilter<TicketDocument> = {};
 
-  if (query.name_title) filter.$or = [
-    { title: { $regex: query.name_title, $options: 'i' } },
-    { customerName: { $regex: query.name_title, $options: 'i' } },
-  ];
-  if (query.priority) filter.priority = query.priority as "LOW" | "MEDIUM" | "HIGH";
+  if (query.priority) filter.priority = query.priority as TicketDocument['priority'];
 
   return filter;
 };
 
-/**
- * Returns a filterable and sortable list of tickets.
- *
- * @route GET /api/tickets
- */
+const includesNameOrTitle = (ticket: TicketDocument, term: string) => {
+  const search = term.toLowerCase();
+  return (
+    ticket.title.toLowerCase().includes(search) ||
+    ticket.customerName.toLowerCase().includes(search)
+  );
+};
+
 export const getTickets = async (req: Request, res: Response) => {
   try {
     const query = req.query as unknown as GetTicketsQuery;
@@ -47,18 +35,18 @@ export const getTickets = async (req: Request, res: Response) => {
       [query.sortBy]: query.sortOrder === 'asc' ? 1 : -1,
     };
 
-    const tickets = await Ticket.find(filter).sort(sort);
+    let tickets = await Ticket.find(filter).sort(sort);
+
+    if (query.name_title) {
+      tickets = tickets.filter((ticket) => includesNameOrTitle(ticket, query.name_title!));
+    }
+
     res.status(StatusCodes.OK).json({ tickets });
   } catch {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching tickets' });
   }
 };
 
-/**
- * Returns a single ticket by its MongoDB ObjectId.
- *
- * @route GET /api/tickets/:id
- */
 export const getTicketById = async (req: Request, res: Response) => {
   try {
     const ticket = await Ticket.findById(req.params.id);
@@ -68,12 +56,6 @@ export const getTicketById = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Creates a new ticket from the validated request body and broadcasts
- * a `ticket:created` event to all connected Socket.IO clients.
- *
- * @route POST /api/tickets
- */
 export const createTicket = async (req: Request, res: Response) => {
   try {
     const { title, description, customerName, customerEmail, status, priority } = req.body;
@@ -86,12 +68,6 @@ export const createTicket = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Updates a ticket's status and broadcasts a `ticket:updated`
- * event to all connected Socket.IO clients.
- *
- * @route PATCH /api/tickets/:id
- */
 export const updateTicketStatus = async (req: Request, res: Response) => {
   try {
     const { status } = req.body;

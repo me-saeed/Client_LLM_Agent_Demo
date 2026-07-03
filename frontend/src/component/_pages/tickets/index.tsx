@@ -15,6 +15,7 @@ import TicketColumn from './_modules/ticketColumn'
 import TicketBoardHeader from './_modules/ticketBoardHeader'
 import TicketItem from './_modules/ticketItem'
 import { useTicketStore } from '@/src/store/tickets/useTicketStore'
+import { useTicketSocket } from '@/src/hooks/useTicketSocket'
 import TicketDetailForm from './_modules/ticketDetailForm'
 import Banner from '../../_basic/banner'
 
@@ -35,6 +36,7 @@ const getTargetStatus = (
 export default function TicketBoard() {
   const { loadTickets, tickets, updateTicketStatus, error, activeTicket, setActiveTicket } =
     useTicketStore()
+  useTicketSocket()
   const [draggedTicket, setDraggedTicket] = useState<Ticket | null>(null)
 
   const sensors = useSensors(

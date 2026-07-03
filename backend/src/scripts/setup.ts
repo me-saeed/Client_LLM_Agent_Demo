@@ -1,9 +1,3 @@
-/**
- * Database setup script.
- *
- * Seeds the database with default ticket records.
- * Run with: pnpm run setup
- */
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { defaultTickets } from '../data/default-tickets';
@@ -14,7 +8,7 @@ dotenv.config();
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/aurexillion';
 
 const seedTickets = async () => {
-  const result = await Ticket.bulkWrite(
+  await Ticket.bulkWrite(
     defaultTickets.map((ticket) => ({
       updateOne: {
         filter: { customerEmail: ticket.customerEmail },
@@ -23,15 +17,11 @@ const seedTickets = async () => {
       },
     }))
   );
-
-  console.log(`Seeded ${defaultTickets.length} default tickets.`);
-  console.log(`Upserted: ${result.upsertedCount}, modified: ${result.modifiedCount}`);
 };
 
 const runSetup = async () => {
   try {
     await mongoose.connect(mongoUri);
-    console.log(`Connected to MongoDB on ${mongoUri}`);
 
     await seedTickets();
   } catch (error) {

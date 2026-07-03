@@ -1,9 +1,3 @@
-/**
- * ESLint configuration.
- *
- * Flat config for ESLint 9+ with recommended JavaScript and TypeScript rules.
- * Lints all `.ts` files in the project except the `dist` build output.
- */
 import eslint from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
@@ -21,6 +15,9 @@ export default defineConfig(
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   }
 );
