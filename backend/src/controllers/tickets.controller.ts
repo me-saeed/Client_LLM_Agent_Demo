@@ -29,9 +29,8 @@ const buildTicketFilter = (query: GetTicketsQuery): QueryFilter<TicketDocument> 
     { title: { $regex: query.name_title, $options: 'i' } },
     { customerName: { $regex: query.name_title, $options: 'i' } },
   ];
-  if (query.priority) filter.priority = query.priority;
+  if (query.priority) filter.priority = query.priority as "LOW" | "MEDIUM" | "HIGH";
 
-  console.log(filter);
   return filter;
 };
 
@@ -49,7 +48,6 @@ export const getTickets = async (req: Request, res: Response) => {
     };
 
     const tickets = await Ticket.find(filter).sort(sort);
-    console.log(tickets);
     res.status(StatusCodes.OK).json({ tickets });
   } catch {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching tickets' });

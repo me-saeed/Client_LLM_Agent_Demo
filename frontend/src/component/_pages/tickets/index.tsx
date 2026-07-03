@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -14,6 +14,7 @@ import {
 import TicketColumn from './_modules/ticketColumn'
 import TicketBoardHeader from './_modules/ticketBoardHeader'
 import TicketItem from './_modules/ticketItem'
+import { useTicketStore } from '@/src/store/tickets/useTicketStore'
 
 const COLUMN_STATUSES: Ticket['status'][] = ['OPEN', 'IN_PROGRESS', 'RESOLVED']
 
@@ -63,8 +64,8 @@ const getTargetStatus = (
 }
 
 export default function TicketBoard() {
-  const [tickets, setTickets] = useState<Ticket[]>(INITIAL_TICKETS)
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
+  const { loadTickets, tickets } = useTicketStore()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -87,12 +88,16 @@ export default function TicketBoard() {
     const newStatus = getTargetStatus(over.id, tickets)
     if (!newStatus) return
 
-    setTickets((prev) =>
-      prev.map((ticket) =>
-        ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket
-      )
-    )
+    // setTickets((prev) =>
+    //   prev.map((ticket) =>
+    //     ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket
+    //   )
+    // )
   }
+
+  useEffect(() => {
+    loadTickets()
+  }, [])
 
   return (
     <DndContext

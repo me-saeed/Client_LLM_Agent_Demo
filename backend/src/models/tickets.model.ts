@@ -12,8 +12,8 @@ export interface Ticket extends Document {
   description: string;
   customerName: string;
   customerEmail: string;
-  status: string;
-  priority: string;
+  status: "OPEN" | "IN_PROGRESS" | "RESOLVED";
+  priority: "LOW" | "MEDIUM" | "HIGH";
 }
 
 /** Mongoose schema with field types, constraints, and automatic timestamps. */
@@ -23,8 +23,8 @@ const ticketSchema = new Schema<Ticket>(
     description: { type: String, required: true, trim: true },
     customerName: { type: String, required: true, trim: true },
     customerEmail: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    status: { type: String, required: true, trim: true },
-    priority: { type: String, required: true, trim: true },
+    status: { type: String, enum: ["OPEN", "IN_PROGRESS", "RESOLVED"], required: true },
+    priority: { type: String, enum: ["LOW", "MEDIUM", "HIGH"], required: true },
   },
   { timestamps: true }
 );

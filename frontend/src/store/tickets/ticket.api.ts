@@ -20,3 +20,23 @@ export async function fetchTickets(params: FetchTicketsParams = {}) {
   const data = await res.json()
   return data.tickets as Ticket[]
 }
+
+export async function createTicket(payload: Omit<Ticket, 'id' | 'createdAt'>) {
+  const res = await fetch('/api/ticket', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error('Failed to create ticket')
+  return res.json()
+}
+
+export async function updateTicketStatus(id: string, status: Ticket['status']) {
+  const res = await fetch(`/api/ticket/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  })
+  if (!res.ok) throw new Error('Failed to update ticket')
+  return res.json()
+}
