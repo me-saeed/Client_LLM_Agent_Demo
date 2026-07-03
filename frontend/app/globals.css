@@ -24,3 +24,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-poppins);
 }
+
+button {
+  cursor: pointer !important;
+}
