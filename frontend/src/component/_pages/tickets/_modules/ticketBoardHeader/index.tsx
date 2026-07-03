@@ -32,26 +32,26 @@ const TicketBoardHeader: React.FC = () => {
       <h1 className="text-white text-2xl font-bold">AUREXILLION Ticket Board</h1>
       <div className="flex items-end justify-between gap-2">
         <div className="flex items-center gap-2">
-        <TextInput
-          label="Search"
-          name="search"
-          placeholder="Search"
-          type="text"
-          value={search}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFilter(event.target.value, 'name_title')
-          }}
-          className="w-48 text-black"
-        />
-        <Select
-          label="Priority"
-          name="filter"
-          options={priorityOptions}
-          onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
-            setFilter(event.target.value, 'priority')
-          }}
-          className="w-48 text-black"
-        />
+          <TextInput
+            label="Search"
+            name="search"
+            placeholder="Search"
+            type="text"
+            value={search}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setFilter(event.target.value, 'name_title')
+            }}
+            className="w-48 text-foreground"
+          />
+          <Select
+            label="Priority"
+            name="filter"
+            options={priorityOptions}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
+              setFilter(event.target.value, 'priority')
+            }}
+            className="w-48 text-black"
+          />
         </div>
         <Button onClick={() => setIsOpenCreateForm(true)}>
           <Plus className="w-4 h-4" />

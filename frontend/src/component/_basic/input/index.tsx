@@ -16,7 +16,7 @@ type TextInputProps = {
 const TextInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, TextInputProps>(
   ({ label, name, type = 'text', placeholder, error, className = '', ...rest }, ref) => {
     const fieldClassName = clsx(
-      'w-full p-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800',
+      'w-full p-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500',
       error ? 'border-red-500' : 'border-gray-300',
       className
     )

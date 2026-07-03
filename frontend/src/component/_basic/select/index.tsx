@@ -17,7 +17,7 @@ type SelectProps = {
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, name, options, error, className = '', ...rest }, ref) => {
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col items-start gap-1">
         {!!label && (
           <label htmlFor={`select-${name}`} className="text-sm font-medium text-gray-700">
             {label}
