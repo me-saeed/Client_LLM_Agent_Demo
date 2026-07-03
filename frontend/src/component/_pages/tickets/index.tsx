@@ -16,6 +16,7 @@ import TicketBoardHeader from './_modules/ticketBoardHeader'
 import TicketItem from './_modules/ticketItem'
 import { useTicketStore } from '@/src/store/tickets/useTicketStore'
 import TicketDetailForm from './_modules/ticketDetailForm'
+import Banner from '../../_basic/banner'
 
 const COLUMN_STATUSES: Ticket['status'][] = ['OPEN', 'IN_PROGRESS', 'RESOLVED']
 
@@ -93,7 +94,7 @@ export default function TicketBoard() {
       <DragOverlay>
         {draggedTicket ? <TicketItem ticket={draggedTicket} isOverlay /> : null}
       </DragOverlay>
-      {error ? <div className="text-white text-center text-xs bg-red-500 fixed top-0 left-0 p-1 w-full">{error}</div> : null}
+      {!error ? <Banner description={error ?? "dd"} variant="error" /> : null}
       <TicketDetailForm open={!!activeTicket} onClose={() => setActiveTicket(null)} ticket={activeTicket} />
     </DndContext>
   )
