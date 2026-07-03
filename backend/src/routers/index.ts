@@ -5,10 +5,10 @@
  * that is attached to the main app in `server.ts`.
  */
 import { Router } from 'express';
-import apiRouter from './api.router';
+import ticketsRouter from './tickets.router';
 
 const appRouter = Router();
 
-appRouter.use('/api', apiRouter);
+appRouter.use('/tickets', ticketsRouter);
 
 export default appRouter;

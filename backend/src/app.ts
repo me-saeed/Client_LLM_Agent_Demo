@@ -14,7 +14,7 @@ export function createApp() {
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(appRouter);
+  app.use('/api', appRouter);
 
   return app;
 }
