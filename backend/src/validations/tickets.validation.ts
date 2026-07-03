@@ -31,17 +31,13 @@ const SORTABLE_FIELDS = [
  *
  * Query params:
  * - `sortBy`, `sortOrder` — sorting
- * - `status`, `priority`, `customerName`, `customerEmail`, `title`, `search` — filters
+ * - `status`, `priority` — filters
  */
 export const getTicketsQuerySchema = yup.object({
   sortBy: yup.string().oneOf(SORTABLE_FIELDS).default('createdAt'),
   sortOrder: yup.string().oneOf(['asc', 'desc']).default('desc'),
   status: yup.string().trim().optional(),
   priority: yup.string().trim().optional(),
-  customerName: yup.string().trim().optional(),
-  customerEmail: yup.string().trim().optional(),
-  title: yup.string().trim().optional(),
-  search: yup.string().trim().optional(),
 });
 
 /** Validates `:id` route params for single-ticket endpoints. */
@@ -63,19 +59,7 @@ export const createTicketSchema = yup.object({
   priority: yup.string().trim().required('Priority is required'),
 });
 
-/**
- * Validates the request body when updating a ticket.
- * Every field is optional, but at least one must be provided.
- */
-export const updateTicketSchema = yup
-  .object({
-    title: yup.string().trim().optional(),
-    description: yup.string().trim().optional(),
-    customerName: yup.string().trim().optional(),
-    customerEmail: yup.string().trim().email('Invalid customer email').optional(),
-    status: yup.string().trim().optional(),
-    priority: yup.string().trim().optional(),
-  })
-  .test('at-least-one-field', 'At least one field is required', (value) =>
-    Object.values(value).some((field) => field !== undefined)
-  );
+/** Validates the request body when updating a ticket status. */
+export const updateTicketSchema = yup.object({
+  status: yup.string().trim().required('Status is required'),
+});

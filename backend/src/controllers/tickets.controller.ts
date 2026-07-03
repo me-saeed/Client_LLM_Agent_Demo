@@ -14,36 +14,24 @@ import { getIO } from '../lib/socket';
 interface GetTicketsQuery {
   sortBy: string;
   sortOrder: 'asc' | 'desc';
-  status?: string;
+  name_title?: string;
   priority?: string;
-  customerName?: string;
-  customerEmail?: string;
-  title?: string;
-  search?: string;
 }
 
 /**
  * Builds a MongoDB filter from validated query params.
- * Exact match for `status`/`priority`; case-insensitive partial match for text fields.
+ * Exact match for `status` and `priority`.
  */
 const buildTicketFilter = (query: GetTicketsQuery): QueryFilter<TicketDocument> => {
   const filter: QueryFilter<TicketDocument> = {};
 
-  if (query.status) filter.status = query.status;
+  if (query.name_title) filter.$or = [
+    { title: { $regex: query.name_title, $options: 'i' } },
+    { customerName: { $regex: query.name_title, $options: 'i' } },
+  ];
   if (query.priority) filter.priority = query.priority;
-  if (query.customerName) filter.customerName = { $regex: query.customerName, $options: 'i' };
-  if (query.customerEmail) filter.customerEmail = { $regex: query.customerEmail, $options: 'i' };
-  if (query.title) filter.title = { $regex: query.title, $options: 'i' };
 
-  if (query.search) {
-    filter.$or = [
-      { title: { $regex: query.search, $options: 'i' } },
-      { description: { $regex: query.search, $options: 'i' } },
-      { customerName: { $regex: query.search, $options: 'i' } },
-      { customerEmail: { $regex: query.search, $options: 'i' } },
-    ];
-  }
-
+  console.log(filter);
   return filter;
 };
 
@@ -61,7 +49,7 @@ export const getTickets = async (req: Request, res: Response) => {
     };
 
     const tickets = await Ticket.find(filter).sort(sort);
-
+    console.log(tickets);
     res.status(StatusCodes.OK).json({ tickets });
   } catch {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching tickets' });
@@ -101,38 +89,22 @@ export const createTicket = async (req: Request, res: Response) => {
 };
 
 /**
- * Partially updates an existing ticket and broadcasts a `ticket:updated`
+ * Updates a ticket's status and broadcasts a `ticket:updated`
  * event to all connected Socket.IO clients.
  *
  * @route PATCH /api/tickets/:id
  */
-export const updateTicket = async (req: Request, res: Response) => {
+export const updateTicketStatus = async (req: Request, res: Response) => {
   try {
-    const { title, description, customerName, customerEmail, status, priority } = req.body;
+    const { status } = req.body;
     const updatedTicket = await Ticket.findByIdAndUpdate(
       req.params.id,
-      { title, description, customerName, customerEmail, status, priority },
+      { status },
       { new: true }
     );
     getIO().emit('ticket:updated', { ticket: updatedTicket });
     res.status(StatusCodes.OK).json({ message: 'Ticket updated successfully' });
   } catch {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error updating ticket' });
-  }
-};
-
-
-/**
- * Deletes a ticket and broadcasts a `ticket:deleted` event to all connected Socket.IO clients.
- *
- * @route DELETE /api/tickets/:id
- */ 
-export const deleteTicket = async (req: Request, res: Response) => {
-  try {
-    const deletedTicket = await Ticket.findByIdAndDelete(req.params.id);
-    getIO().emit('ticket:deleted', { ticket: deletedTicket });
-    res.status(StatusCodes.OK).json({ message: 'Ticket deleted successfully' });
-  } catch {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error deleting ticket' });
   }
 };

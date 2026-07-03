@@ -12,6 +12,24 @@ import { AnyObjectSchema, ValidationError } from 'yup';
 type RequestSource = 'body' | 'query' | 'params';
 
 /**
+ * Replaces a validated request slice on `req`.
+ * Express 5 exposes `query` as a getter-only property, so we define an own property instead.
+ */
+const setValidatedValue = (req: Request, source: RequestSource, value: unknown) => {
+  if (source === 'query') {
+    Object.defineProperty(req, 'query', {
+      value,
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
+    return;
+  }
+
+  req[source] = value;
+};
+
+/**
  * Builds an Express middleware that validates a request slice with a Yup schema.
  *
  * On success, the validated (and stripped) value replaces `req[source]`.
@@ -28,7 +46,7 @@ export const validate = (schema: AnyObjectSchema, source: RequestSource = 'body'
         abortEarly: false,
         stripUnknown: true,
       });
-      req[source] = value;
+      setValidatedValue(req, source, value);
       next();
     } catch (error) {
       if (error instanceof ValidationError) {
