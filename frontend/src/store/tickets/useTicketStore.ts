@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { fetchTickets } from './ticket.api'
+import { fetchTickets, updateTicketStatus } from './ticket.api'
 
 type TicketState = {
   tickets: Ticket[]
@@ -29,7 +29,7 @@ export const useTicketStore = create<TicketState>((set, get) => ({
     try {
       const { search } = get()
       const tickets = await fetchTickets({ search: search || undefined })
-      set({ tickets, isLoading: false })
+      set({ tickets, isLoading: false, error: null })
     } catch (err) {
       set({
         error: err instanceof Error ? err.message : 'Unknown error',
@@ -39,12 +39,21 @@ export const useTicketStore = create<TicketState>((set, get) => ({
   },
   setSearch: (search) => set({ search }),
   setActiveTicket: (ticket) => set({ activeTicket: ticket }),
-  updateTicketStatus: (id, status) =>
-    set((state) => ({
-      tickets: state.tickets.map((t) =>
-        t.id === id ? { ...t, status } : t
-      ),
-    })),
+  updateTicketStatus: async (id, status) => {
+    try {
+      set((state) => ({
+        tickets: state.tickets.map((t) =>
+          t.id === id ? { ...t, status } : t
+        ),
+        error: null,
+      }))
+      await updateTicketStatus(id, status)
+    } catch (err) {
+      set({
+        error: err instanceof Error ? err.message : 'Unknown error',
+      })
+    }
+  },
   openCreateForm: () => set({ isCreateFormOpen: true }),
   closeCreateForm: () => set({ isCreateFormOpen: false }),
 }))

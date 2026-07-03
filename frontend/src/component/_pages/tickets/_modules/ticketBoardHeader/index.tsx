@@ -9,7 +9,7 @@ const TicketBoardHeader: React.FC = () => {
   const [isOpenCreateForm, setIsOpenCreateForm] = useState(false)
   const [search, setSearch] = useState('')
   return (
-    <div className="text-center pt-4 relative container mx-auto px-4">
+    <div className="text-center pt-8 relative container mx-auto px-4">
       <h1 className="text-white text-2xl font-bold">AUREXILLION Ticket Board</h1>
       <div className="flex items-end justify-end gap-2">
         <TextInput

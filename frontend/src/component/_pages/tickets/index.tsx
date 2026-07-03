@@ -65,7 +65,7 @@ const getTargetStatus = (
 
 export default function TicketBoard() {
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
-  const { loadTickets, tickets } = useTicketStore()
+  const { loadTickets, tickets, updateTicketStatus, error } = useTicketStore()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -88,11 +88,7 @@ export default function TicketBoard() {
     const newStatus = getTargetStatus(over.id, tickets)
     if (!newStatus) return
 
-    // setTickets((prev) =>
-    //   prev.map((ticket) =>
-    //     ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket
-    //   )
-    // )
+    updateTicketStatus(ticketId as string, newStatus)
   }
 
   useEffect(() => {
@@ -128,6 +124,7 @@ export default function TicketBoard() {
       <DragOverlay>
         {activeTicket ? <TicketItem ticket={activeTicket} isOverlay /> : null}
       </DragOverlay>
+      {error ? <div className="text-white text-center text-xs bg-red-500 fixed top-0 left-0 p-1 w-full">{error}</div> : null}
     </DndContext>
   )
 }

@@ -6,14 +6,17 @@
  */
 import mongoose, { Document, Schema } from 'mongoose';
 
+export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH';
+
 /** Shape of a ticket document in MongoDB. */
 export interface Ticket extends Document {
   title: string;
   description: string;
   customerName: string;
   customerEmail: string;
-  status: "OPEN" | "IN_PROGRESS" | "RESOLVED";
-  priority: "LOW" | "MEDIUM" | "HIGH";
+  status: TicketStatus;
+  priority: TicketPriority;
 }
 
 /** Mongoose schema with field types, constraints, and automatic timestamps. */
