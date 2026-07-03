@@ -4,27 +4,56 @@ import clsx from 'clsx'
 type TextInputProps = {
   label?: string
   name: string
-  type?: React.HTMLInputTypeAttribute
+  type?: React.HTMLInputTypeAttribute | 'textarea'
   placeholder?: string
-  value?: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  error?: string
   className?: string
-}
-
-const TextInput: React.FC<TextInputProps> = ({ label, name, type = "text", placeholder, value, onChange, className = "" }) => {
-  return (
-    <div className="flex flex-col gap-2">
-      {!!label && <label htmlFor={`input-${name}`} className='text-sm font-medium text-gray-700'>{label}</label>}
-      <input
-        id={`input-${name}`}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        className={clsx("w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500", className)}
-      />
-    </div>
+} & (
+    | React.InputHTMLAttributes<HTMLInputElement>
+    | React.TextareaHTMLAttributes<HTMLTextAreaElement>
   )
-}
+
+const TextInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, TextInputProps>(
+  ({ label, name, type = 'text', placeholder, error, className = '', ...rest }, ref) => {
+    const fieldClassName = clsx(
+      'w-full p-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800',
+      error ? 'border-red-500' : 'border-gray-300',
+      className
+    )
+
+    return (
+      <div className="flex flex-col gap-1">
+        {!!label && (
+          <label htmlFor={`input-${name}`} className="text-sm font-medium text-gray-700">
+            {label}
+          </label>
+        )}
+        {type === 'textarea' ? (
+          <textarea
+            id={`input-${name}`}
+            name={name}
+            placeholder={placeholder}
+            ref={ref as React.Ref<HTMLTextAreaElement>}
+            className={clsx(fieldClassName, 'min-h-24 resize-y')}
+            {...(rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+          />
+        ) : (
+          <input
+            id={`input-${name}`}
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            ref={ref as React.Ref<HTMLInputElement>}
+            className={fieldClassName}
+            {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}
+          />
+        )}
+        {!!error && <p className="text-sm text-red-500">{error}</p>}
+      </div>
+    )
+  }
+)
+
+TextInput.displayName = 'TextInput'
 
 export default TextInput
