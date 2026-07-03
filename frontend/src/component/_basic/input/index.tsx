@@ -22,7 +22,7 @@ const TextInput = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, TextI
     )
 
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col items-start gap-1">
         {!!label && (
           <label htmlFor={`input-${name}`} className="text-sm font-medium text-gray-700">
             {label}
