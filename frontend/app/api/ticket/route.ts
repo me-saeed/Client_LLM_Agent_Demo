@@ -39,3 +39,32 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const url = `${BACKEND_URL}/api/tickets`
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}))
+      return NextResponse.json(
+        { message: error.message ?? 'Failed to create ticket' },
+        { status: res.status }
+      )
+    }
+
+    const data = await res.json()
+    return NextResponse.json(data, { status: res.status })
+  } catch {
+    return NextResponse.json(
+      { message: 'Error connecting to ticket service' },
+      { status: 500 }
+    )
+  }
+}
