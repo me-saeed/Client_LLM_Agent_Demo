@@ -4,7 +4,7 @@ interface Ticket {
     description: string;
     customerName: string;
     customerEmail: string;
-    status: "open" | "in_progress" | "closed";
-    priority: "low" | "medium" | "high";
+    status: "OPEN" | "IN_PROGRESS" | "RESOLVED";
+    priority: "LOW" | "MEDIUM" | "HIGH";
     createdAt: string;
 }
